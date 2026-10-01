@@ -1,0 +1,12 @@
+# Peças da COZINHA (backend). Versões fixas = todo mundo roda exatamente a mesma coisa.
+# Mudou algo aqui? Rode `make up` de novo (ele reconstrói a imagem do Docker).
+# Nunca rode `pip install` no computador da pessoa: tudo fica dentro do container.
+fastapi==0.142.2
+uvicorn[standard]==0.54.0
+sqlalchemy==2.1.1
+psycopg[binary]==3.3.6
+pydantic==2.13.5
+# conversa com a API da Twygo
+httpx==0.28.1
+# testes automáticos (make test)
+pytest==9.1.1
