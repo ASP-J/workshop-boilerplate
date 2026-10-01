@@ -6,6 +6,11 @@
 #
 # SEGURANÇA: as portas são publicadas SÓ em 127.0.0.1 (este computador).
 # Nunca tire o "127.0.0.1:" da frente das portas — isso exporia o sistema na rede.
+#
+# O .env é OPCIONAL: sem ele tudo liga com os valores padrão abaixo (${VAR:-padrão}).
+# O Docker Compose lê o .env desta pasta sozinho, se ele existir.
+# Portas: 5193 (tela) e 5194 (cozinha). Se estiverem ocupadas, dá para trocar
+# com FRONTEND_PORT / BACKEND_PORT no .env (veja o .env.example).
 # =============================================================================
 services:
   postgres:
@@ -26,7 +31,7 @@ services:
   backend:
     build: ./backend
     ports:
-      - "127.0.0.1:5194:8000"
+      - "127.0.0.1:${BACKEND_PORT:-5194}:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -51,7 +56,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "127.0.0.1:5193:5173"
+      - "127.0.0.1:${FRONTEND_PORT:-5193}:5173"
     depends_on:
       - backend
     environment:
