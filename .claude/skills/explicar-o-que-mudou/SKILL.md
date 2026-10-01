@@ -5,6 +5,8 @@ description: Resume em linguagem simples o que foi alterado no projeto. Use quan
 
 # Explicar o que mudou
 
+> **Windows?** Não existe `make`, `cp` nem `open -e`: use os comandos `docker compose ...` (ou os `.bat` da pasta) e `copy` / `notepad`. Tabela completa no `CLAUDE.md` (seção "Mac ou Windows?").
+
 1. Descubra as mudanças: `git status --short` e `git diff --stat -- .` **apenas nesta pasta**. Se não houver git, use o histórico da conversa.
 2. Ignore `node_modules`, `dist`, `__pycache__`, `package-lock.json`. **Nunca** abra ou cite o conteúdo do `.env`. Não cite dados de planilhas (e-mails, nomes).
 3. Responda neste formato, sem jargão:

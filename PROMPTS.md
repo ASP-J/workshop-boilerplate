@@ -19,7 +19,7 @@ O Claude abre o arquivo `.env`. Cole o token logo depois de `TWYGO_API_TOKEN=`, 
 pronto
 ```
 
-O Claude religa o sistema (`make up`) e confere se o token funcionou. **Nunca cole o token no chat.**
+O Claude religa o sistema (`make up`; no Windows `docker compose up -d --build -V`) e confere se o token funcionou. **Nunca cole o token no chat.**
 
 ---
 

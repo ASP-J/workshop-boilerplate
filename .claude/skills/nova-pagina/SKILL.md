@@ -5,6 +5,8 @@ description: Cria uma página nova no menu do painel e, se precisar guardar dado
 
 # Nova página
 
+> **Windows?** Não existe `make`, `cp` nem `open -e`: use os comandos `docker compose ...` (ou os `.bat` da pasta) e `copy` / `notepad`. Tabela completa no `CLAUDE.md` (seção "Mac ou Windows?").
+
 1. **Plano em linguagem simples** (2 a 4 tópicos) antes de mexer. Diga se vai precisar guardar algo no banco (estoque) ou se é só tela (salão).
 
 ## A página (sempre)

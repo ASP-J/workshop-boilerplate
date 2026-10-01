@@ -5,6 +5,8 @@ description: Cruza uma planilha (carregada ou salva no banco) com os usuários d
 
 # Cruzar com a Twygo
 
+> **Windows?** Não existe `make`, `cp` nem `open -e`: use os comandos `docker compose ...` (ou os `.bat` da pasta) e `copy` / `notepad`. Tabela completa no `CLAUDE.md` (seção "Mac ou Windows?").
+
 ## Segurança
 - O token fica **só** no `.env`, lido pela cozinha (`backend/app/routers/twygo.py`, via `docker-compose.yml`). Nunca mostre, imprima ou coloque em código. Não rode `docker compose config` nem `printenv` no container.
 - O navegador fala apenas com o servidor local (`/api/...`), nunca direto com `api.twygo.com`.
@@ -25,7 +27,7 @@ description: Cruza uma planilha (carregada ou salva no banco) com os usuários d
 1. Se ainda não existir (`test -f .env`, sem abrir): `cp .env.example .env` (Windows: `copy .env.example .env`).
 2. Abra o arquivo para o usuário: **Mac** `open -e .env` · **Windows** `notepad .env`.
 3. Diga: "Cole o token logo depois de `TWYGO_API_TOKEN=`, salve e me diga **pronto**." **Nunca peça o token no chat.**
-4. Quando ele disser "pronto": `make up` (recria a cozinha com o `.env` novo) e confira `curl -s http://127.0.0.1:5194/api/twygo/status` → `{"configured":true}`.
+4. Quando ele disser "pronto": `make up` (Windows: `docker compose up -d --build -V`) — recria a cozinha com o `.env` novo — e confira `curl -s http://127.0.0.1:5194/api/twygo/status` → `{"configured":true}`.
 5. Se ele colar o token no chat mesmo assim: grave no `.env`, **não repita o valor** e recomende trocar/revogar o token depois do workshop.
 
 ## Novo endpoint da Twygo

@@ -29,6 +29,7 @@ O **Docker** é o prédio do restaurante: liga as três partes juntas com um com
 ## Pré-requisitos
 
 1. **Docker Desktop** instalado e **aberto** (o ícone da baleia 🐳 aparece na barra do Mac ou do Windows). Baixe em <https://www.docker.com/products/docker-desktop/>.
+   - **No Windows**, o Docker Desktop precisa do **WSL 2** (veja a seção [No Windows](#no-windows)).
 2. **Claude Code** instalado.
 
 Só isso. Não precisa instalar Node, Python nem banco de dados: tudo roda dentro do Docker.
@@ -48,6 +49,8 @@ O Claude Code precisa ser aberto **dentro da pasta do projeto**. O jeito mais f�
 5. Digite `claude` e aperte **Enter**.
 
 **No Windows**
+
+> Dica: trabalhe numa pasta simples, como `C:\workshop`, e **não** dentro do OneDrive, da Área de Trabalho ou de Documentos sincronizados (fica lento e pode travar). Detalhes na seção [No Windows](#no-windows).
 
 1. Abra a pasta no Explorador de Arquivos.
 2. Clique na barra de endereço lá em cima, digite `cmd` (ou `powershell`) e aperte **Enter**. Um terminal abre já dentro da pasta.
@@ -77,7 +80,7 @@ O token é a "senha" que permite ler os usuários da Twygo. **Ele nunca vai para
 1. Peça ao Claude: `Crie o .env a partir do .env.example e abra o arquivo para eu colar o token. Não peça nem mostre o token no chat.`
 2. O Claude abre o arquivo `.env` no editor de texto (no Mac com `open -e .env`, no Windows com `notepad .env`).
 3. Cole o token logo depois de `TWYGO_API_TOKEN=` (no lugar de `cole_o_token_do_workshop_aqui`) e **salve** (Cmd + S no Mac, Ctrl + S no Windows).
-4. Volte ao Claude Code e diga: `pronto`. Ele religa o sistema (`make up`) e confere se o token funcionou.
+4. Volte ao Claude Code e diga: `pronto`. Ele religa o sistema (`make up`, ou `docker compose up -d --build -V` no Windows) e confere se o token funcionou.
 5. Na página **Início**, o "Token da Twygo" deve aparecer como **configurado**.
 
 Colou o token no chat sem querer? Avise o Claude: ele coloca no `.env` sem repetir o valor, e depois do workshop peça ao João ou à Adriana para trocar o token.
@@ -97,7 +100,7 @@ As páginas de planilha funcionam **sem** token.
 ### Onde a planilha fica guardada
 
 - **Ao carregar**, ela fica **só nesta aba do navegador**: continua lá se você recarregar a página, some ao fechar a aba ou ao clicar em **Limpar planilha**.
-- **Ao clicar em "Salvar no banco"**, ela vai para o estoque (banco de dados **deste computador**) e aparece em **Planilhas salvas**. Continua lá mesmo depois de desligar o sistema ou o computador. Para tirar de lá, clique em **Apagar** (ou apague tudo com `make reset`).
+- **Ao clicar em "Salvar no banco"**, ela vai para o estoque (banco de dados **deste computador**) e aparece em **Planilhas salvas**. Continua lá mesmo depois de desligar o sistema ou o computador. Para tirar de lá, clique em **Apagar** (ou apague tudo com `make reset`; no Windows, `resetar.bat`).
 
 ### A planilha do workshop
 
@@ -124,16 +127,73 @@ Ideias de pedidos prontos: veja **[PROMPTS.md](PROMPTS.md)**.
 
 ## Ligar, desligar e outros comandos
 
-Normalmente você só pede ao Claude ("suba o sistema", "desligue o sistema"). Se quiser fazer na mão, no terminal, dentro da pasta do projeto:
+Normalmente você só pede ao Claude ("suba o sistema", "desligue o sistema"). Se quiser fazer na mão, dentro da pasta do projeto:
 
-| O que fazer | Mac (com `make`) | Windows ou sem `make` |
-|---|---|---|
-| Ligar (e reconstruir se algo mudou) | `make up` | `docker compose up -d --build -V` |
-| Desligar (as planilhas salvas continuam guardadas) | `make down` | `docker compose down` |
-| Ver o que está acontecendo (Ctrl+C para sair) | `make logs` | `docker compose logs -f --tail=100` |
-| Ver o que está ligado | `make ps` | `docker compose ps` |
-| **Apagar o banco** e desligar (começar do zero) | `make reset` | `docker compose down -v` |
-| Rodar os testes automáticos | `make test` | `docker compose exec -T backend pytest` e depois `docker compose exec -T frontend npm test` |
+| O que fazer | Mac (terminal) | Windows (clique duas vezes) | Qualquer computador (terminal) |
+|---|---|---|---|
+| Ligar (e reconstruir se algo mudou) | `make up` (ou clique duas vezes em `iniciar.command`) | `iniciar.bat` | `docker compose up -d --build -V` |
+| Desligar (as planilhas salvas continuam guardadas) | `make down` | `parar.bat` | `docker compose down` |
+| Ver o que está acontecendo (Ctrl+C para sair) | `make logs` | `logs.bat` | `docker compose logs -f --tail=100` |
+| Ver o que está ligado | `make ps` | — | `docker compose ps` |
+| **Apagar o banco** e desligar (começar do zero) | `make reset` | `resetar.bat` (pede para digitar SIM) | `docker compose down -v` |
+| Rodar os testes automáticos | `make test` | `testar.bat` | `docker compose exec -T backend pytest` e depois `docker compose exec -T frontend npm test` |
+
+Sem o arquivo `.env` o sistema liga do mesmo jeito (só a Twygo fica "não configurada"). O `iniciar.bat` e o `iniciar.command` criam o `.env` a partir do `.env.example` se ele ainda não existir.
+
+**Porta ocupada?** Dá para trocar as portas sem mexer no código: no `.env`, tire o `#` da frente de `FRONTEND_PORT=5193` / `BACKEND_PORT=5194`, troque o número e ligue de novo. (Os endereços mudam para o número novo.)
+
+## No Windows
+
+Funciona no Windows 10 e 11. Você **não** precisa de `make`, Node nem Python: só do Docker Desktop.
+
+### Pré-requisitos
+
+1. **WSL 2** (o "Linux de dentro do Windows" que o Docker usa). Normalmente o instalador do Docker Desktop já cuida disso. Se pedir, siga o guia oficial: <https://learn.microsoft.com/pt-br/windows/wsl/install> (resumo: abrir o PowerShell **como administrador**, rodar `wsl --install` e reiniciar o computador).
+2. **Docker Desktop para Windows**, com a opção **"Use WSL 2"** marcada: <https://docs.docker.com/desktop/setup/install/windows-install/>. Depois de instalar, abra o Docker Desktop e espere a baleia 🐳 parar de se mexer.
+3. **Git para Windows** (o Claude Code usa): <https://git-scm.com/downloads/win>.
+4. **Claude Code**.
+
+### Onde colocar a pasta
+
+Use uma pasta curta e fora do OneDrive, por exemplo `C:\workshop`:
+
+```bat
+mkdir C:\workshop
+cd C:\workshop
+claude
+```
+
+Por quê? Pastas dentro do **OneDrive** (às vezes a Área de Trabalho e os Documentos ficam lá sem você saber) e antivírus vigiando a pasta deixam o Docker **muito lento** e podem travar o "salvou, atualizou".
+
+### Abrir o terminal na pasta
+
+No Explorador de Arquivos, abra a pasta do projeto, clique na **barra de endereço** lá em cima, digite `cmd` e aperte **Enter**. Um terminal abre já dentro da pasta. Digite `claude` e aperte Enter.
+
+### Ligar o sistema
+
+- **Jeito 1 — clique duplo:** na pasta do projeto, clique duas vezes em **`iniciar.bat`**. Ele confere se o Docker está aberto, cria o `.env` se faltar, liga tudo, espera ficar pronto e abre o navegador em http://localhost:5193.
+- **Jeito 2 — pedindo ao Claude:** "suba o sistema".
+
+Para desligar: **`parar.bat`**. Para ver o que está acontecendo: **`logs.bat`**. Para os testes: **`testar.bat`**. Para apagar o banco: **`resetar.bat`**.
+
+> O Windows pode mostrar "O Windows protegeu o computador" na primeira vez que você abre um `.bat`. Clique em **Mais informações** → **Executar assim mesmo**. Os scripts só rodam `docker compose` dentro desta pasta.
+
+### Token no Windows
+
+No terminal, dentro da pasta: `notepad .env` (se o `.env` ainda não existir: `copy .env.example .env` antes). Cole o token depois de `TWYGO_API_TOKEN=`, salve com **Ctrl + S**, feche o Bloco de Notas e diga **pronto** ao Claude. Depois ligue de novo (`iniciar.bat`).
+
+### Problemas comuns no Windows
+
+| Sintoma | O que fazer |
+|---|---|
+| "**WSL 2 installation is incomplete**" ou "WSL update" ao abrir o Docker Desktop | Abra o PowerShell **como administrador**, rode `wsl --update` (ou `wsl --install` se nunca instalou), reinicie o computador e abra o Docker Desktop de novo |
+| "**Virtualization support not detected**" / "Hardware assisted virtualization" / o Docker não inicia | A virtualização está desligada na BIOS. Peça ajuda à TI para ligar **Intel VT-x** ou **AMD-V / SVM** na BIOS (e a opção "Plataforma de Máquina Virtual" do Windows) |
+| `iniciar.bat` diz "Abra o Docker Desktop e espere a baleia parar" | Abra o Docker Desktop pelo menu Iniciar, espere ele terminar de iniciar e clique em `iniciar.bat` de novo |
+| "**port is already allocated**" / porta em uso | Outro programa (ou outra cópia do sistema) usa a 5193 ou a 5194. Veja quem é: `netstat -ano \| findstr :5193` (o último número é o PID; o Gerenciador de Tarefas mostra o programa pela coluna PID). Feche o programa ou troque a porta no `.env` (veja acima) |
+| Tudo muito lento, ou salvar um arquivo não atualiza a tela | Tire a pasta do **OneDrive** (copie para `C:\workshop`) e, se puder, peça à TI para o antivírus não vigiar essa pasta |
+| "image operating system linux cannot be used on this platform" | O Docker está no modo "Windows containers". Clique com o botão direito na baleia 🐳 → **Switch to Linux containers** |
+| `make` não é reconhecido | Normal no Windows: use os arquivos `.bat` ou os comandos `docker compose ...` da tabela acima |
+| O `.bat` abre e fecha muito rápido | Abra o terminal na pasta (`cmd` na barra de endereço) e digite `iniciar.bat`: assim a mensagem fica na tela |
 
 ## As 8 habilidades do Claude neste projeto
 
@@ -169,13 +229,14 @@ Problemas comuns:
 | Sintoma | O que fazer / pedir ao Claude |
 |---|---|
 | "Cannot connect to the Docker daemon" / "Docker não está rodando" | Abra o **Docker Desktop**, espere a baleia 🐳 ficar parada e peça: "suba o sistema" |
+| Windows: WSL, virtualização, OneDrive, `make` não reconhecido | Veja [Problemas comuns no Windows](#problemas-comuns-no-windows) |
 | A página não abre | "suba o sistema" |
 | "port is already allocated" / porta já está em uso | Outro programa está usando a porta 5193 ou 5194. Peça: "a porta está ocupada, descubra quem está usando e resolva" |
-| **Página em branco** | Peça: "a página está em branco, olhe os logs e corrija" (o Claude roda `make logs`) |
+| **Página em branco** | Peça: "a página está em branco, olhe os logs e corrija" (o Claude olha os logs com `docker compose logs`) |
 | Início mostra "Banco de dados: sem conexão" | "suba o sistema" (se continuar: "deu erro: banco sem conexão") |
 | Token "não configurado" | "Crie o .env a partir do .env.example e abra o arquivo para eu colar o token" (cole no arquivo, salve e diga "pronto") |
 | "Token inválido ou vencido" | Peça um token novo ao João ou à Adriana |
-| **Mudou uma tabela do banco** e deu erro | Peça: "resete o banco" (o Claude roda `make reset` e `make up`; **apaga as planilhas salvas**) |
+| **Mudou uma tabela do banco** e deu erro | Peça: "resete o banco" (o Claude apaga o banco e liga de novo — `make reset` + `make up`, ou `resetar.bat` + `iniciar.bat` no Windows; **apaga as planilhas salvas**) |
 | Mudou algo e quebrou | "desfaça a última mudança" ou "explique o que mudou" |
 
-Para **desligar** o sistema: peça ao Claude "desligue o sistema" (ou rode `make down`).
+Para **desligar** o sistema: peça ao Claude "desligue o sistema" (ou rode `make down`; no Windows, clique duas vezes em `parar.bat`).

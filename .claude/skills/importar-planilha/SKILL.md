@@ -5,6 +5,8 @@ description: Usa uma planilha (CSV ou XLSX) no painel — do usuário ou um novo
 
 # Importar planilha
 
+> **Windows?** Não existe `make`, `cp` nem `open -e`: use os comandos `docker compose ...` (ou os `.bat` da pasta) e `copy` / `notepad`. Tabela completa no `CLAUDE.md` (seção "Mac ou Windows?").
+
 ## LGPD primeiro
 - **Não copie planilhas com dados reais para dentro do projeto** e não envie para serviços externos. Se precisar ficar na pasta, use `dados/` (fora do Git).
 - A planilha do workshop (`frontend/public/exemplos/capacitacao_workshop.csv`) é a exceção combinada: tem **e-mails reais da Twygo**, só para o workshop. Não compartilhe, não liste e-mails nas respostas e lembre o usuário de não tirar print de tabelas com e-mails.

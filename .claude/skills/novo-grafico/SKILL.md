@@ -5,6 +5,8 @@ description: Adiciona um gráfico (barra, pizza, linha) ou card de número a uma
 
 # Novo gráfico
 
+> **Windows?** Não existe `make`, `cp` nem `open -e`: use os comandos `docker compose ...` (ou os `.bat` da pasta) e `copy` / `notepad`. Tabela completa no `CLAUDE.md` (seção "Mac ou Windows?").
+
 1. Pergunte (se não estiver claro): qual página, agrupar por qual coluna, somar qual coluna (ou só contar), e se os dados vêm da planilha carregada, de uma planilha salva no banco ou de um endpoint.
 2. Barra/pizza: use `ChartCard` com dados `[{ name, value }]`:
    ```jsx

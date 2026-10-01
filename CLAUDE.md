@@ -10,6 +10,31 @@ Cada pessoa usa este painel para automatizar uma tarefa repetitiva da sua área.
 - Não sabe (e não precisa saber) o que é React, FastAPI, Docker, porta ou terminal.
 - No computador dele há **só Docker Desktop + Claude Code**. Não há Node nem Python instalados — e não devem ser instalados.
 
+## Mac ou Windows? (descubra antes do primeiro comando)
+
+O usuário pode estar num **Mac** ou num **Windows 10/11** (Docker Desktop com WSL 2). Descubra pelo ambiente (a plataforma aparece no seu contexto: `darwin` = Mac, `win32` = Windows; na dúvida rode `uname -s` — no Windows ele falha ou mostra `MINGW`/`MSYS`) e use os comandos certos:
+
+| Para | Mac / Linux | Windows |
+|---|---|---|
+| Ligar / reconstruir | `make up` | `docker compose up -d --build -V` (o usuário pode clicar duas vezes em `iniciar.bat`) |
+| Desligar | `make down` | `docker compose down` (ou `parar.bat`) |
+| Logs | `make logs` / `docker compose logs --tail=80 backend` | `docker compose logs --tail=80 backend` (ou `logs.bat`) |
+| Apagar o banco | `make reset` | `docker compose down -v` (ou `resetar.bat`, que pede para digitar SIM) |
+| Testes | `make test` | `docker compose exec -T backend pytest` e `docker compose exec -T frontend npm test` (ou `testar.bat`) |
+| Criar o `.env` | `cp .env.example .env` | `copy .env.example .env` |
+| Abrir o `.env` para o usuário | `open -e .env` | `notepad .env` |
+| Docker está aberto? | `docker info >/dev/null 2>&1 && echo ok` | `docker info >nul 2>&1 && echo ok` |
+| Quem usa a porta? | `lsof -i :5193 -i :5194` | `netstat -ano \| findstr :5193` |
+
+**No Windows, nunca** use `make`, `cp`, `open -e`, `lsof`, `rm -rf` nem `/dev/null` dentro do `cmd`. Prefira os comandos `docker compose ...` (funcionam igual em qualquer terminal) e diga ao usuário que ele também pode clicar duas vezes nos `.bat`. Se você estiver rodando no Git Bash do Windows, `curl` e `/dev/null` funcionam, mas para o **usuário** mostre sempre a versão do `cmd`.
+
+- Caminhos no Windows usam barra invertida (`frontend\src\pages`) e **caminhos com espaço vão entre aspas** (`cd "C:\Users\Maria\workshop boilerplate"`). Nos comandos do `docker compose` use caminhos relativos à pasta do projeto.
+- Se a pasta estiver dentro do **OneDrive** (o caminho tem `OneDrive`), avise com gentileza que pode ficar lento e sugira mover para `C:\workshop`.
+- Para conferir endereços no Windows use `curl.exe` (no PowerShell, `curl` sozinho é outro comando): `curl.exe -s http://127.0.0.1:5194/health`.
+- Os `.bat` aceitam `/q` para não pausar no fim (ex.: `iniciar.bat /q`), se precisar rodá-los você mesmo.
+- Os `.bat` têm final de linha CRLF e os demais arquivos LF (veja `.gitattributes`). Não troque os finais de linha.
+- Erros típicos do Windows (WSL 2 incompleto, virtualização desligada na BIOS, Docker no modo "Windows containers", porta ocupada, OneDrive lento): veja a seção **No Windows** do `README.md` e a skill `deu-erro`.
+
 ## Como responder (sempre)
 
 1. **Responda em português do Brasil, sem jargão.** Se precisar usar um termo técnico, explique em uma frase. Use a analogia do restaurante: **salão** = tela (React), **cozinha** = servidor local (FastAPI), **estoque** = banco de dados (PostgreSQL), **prédio** = Docker.
@@ -18,11 +43,11 @@ Cada pessoa usa este painel para automatizar uma tarefa repetitiva da sua área.
 4. **Termine sempre dizendo qual endereço abrir e como conferir**, por exemplo:
    > Abra **http://localhost:5193/minha-automacao**, clique em "RH · treinamentos" e veja o gráfico de horas por setor.
 5. Se o pedido for vago, faça **no máximo 2 perguntas** objetivas ou proponha uma solução simples e pergunte se serve.
-6. Se o sistema não estiver ligado, ligue (`make up`) ou diga como ligar.
+6. Se o sistema não estiver ligado, ligue (`make up`; no Windows `docker compose up -d --build -V`) ou diga como ligar.
 
 ## Regras de ouro (inegociáveis)
 
-- **Tudo roda só no computador do usuário.** As portas do `docker-compose.yml` são publicadas **só** em `127.0.0.1` (`"127.0.0.1:5193:5173"`, `"127.0.0.1:5194:8000"`). **Nunca** tire o `127.0.0.1:` da frente, nunca publique a porta do banco e não exponha nada na rede. (Dentro do container a tela/cozinha escutam em `0.0.0.0` — isso é obrigatório no Docker e está ok porque a porta publicada é só local.)
+- **Tudo roda só no computador do usuário.** As portas do `docker-compose.yml` são publicadas **só** em `127.0.0.1` (`"127.0.0.1:${FRONTEND_PORT:-5193}:5173"`, `"127.0.0.1:${BACKEND_PORT:-5194}:8000"` — o número pode mudar pelo `.env`, o `127.0.0.1:` nunca). **Nunca** tire o `127.0.0.1:` da frente, nunca publique a porta do banco e não exponha nada na rede. (Dentro do container a tela/cozinha escutam em `0.0.0.0` — isso é obrigatório no Docker e está ok porque a porta publicada é só local.)
 - **Nunca publique.** Não faça deploy nem envie para servidor, nuvem, Vercel, Netlify, Dokploy, Docker remoto/registry, GitHub público, Google Drive ou similar. Não rode `git push`, `docker push`, `vercel`, `netlify`, `gh repo create` etc.
   - Se o usuário pedir, **recuse com gentileza**: "Publicar exige uma auditoria de segurança feita pelo João, pela Adriana ou por um dev. Posso deixar tudo pronto e documentado aqui no seu computador para essa revisão."
 - **Nunca instale nada no computador da pessoa.** Nada de `npm install`, `pip install`, `brew install`, `winget`, instalar Node ou Python. Tudo roda dentro do Docker. Biblioteca nova → edite `frontend/package.json` (e gere o lock **dentro do container**: `docker compose exec frontend npm install <pacote>`) ou `backend/requirements.txt` (com versão fixa `==`) e rode `make up` (reconstrói).
@@ -37,17 +62,19 @@ Cada pessoa usa este painel para automatizar uma tarefa repetitiva da sua área.
 
 O usuário **nunca** cola o token no chat. Quando ele pedir *"Crie o .env a partir do .env.example e abra o arquivo para eu colar o token"* (ou o token não estiver configurado):
 
-1. Se ainda não existir (`test -f .env`, sem abrir), crie: `cp .env.example .env` (Windows: `copy .env.example .env`).
+1. Se ainda não existir (`test -f .env` / Windows `if exist .env echo existe`, sem abrir), crie: `cp .env.example .env` (Windows: `copy .env.example .env`).
 2. Abra o arquivo no editor de texto do computador: **Mac** `open -e .env` · **Windows** `notepad .env`.
 3. Diga: "Cole o token logo depois de `TWYGO_API_TOKEN=` (no lugar de `cole_o_token_do_workshop_aqui`), salve o arquivo (Cmd+S / Ctrl+S) e me diga **pronto**."
-4. Quando ele disser "pronto": rode `make up` (o Docker recria a cozinha com o `.env` novo — reiniciar não basta) e confira `curl -s http://127.0.0.1:5194/api/twygo/status` → `{"configured":true}`. Conte o resultado em uma frase, sem mostrar o token.
+4. Quando ele disser "pronto": rode `make up` (Windows: `docker compose up -d --build -V`) — o Docker recria a cozinha com o `.env` novo, reiniciar não basta — e confira `curl -s http://127.0.0.1:5194/api/twygo/status` → `{"configured":true}`. Conte o resultado em uma frase, sem mostrar o token.
 
 ## Como o projeto é organizado
 
 | Pasta / arquivo | O que é |
 |---|---|
 | `docker-compose.yml` | O "prédio": liga `postgres` (estoque), `backend` (cozinha) e `frontend` (salão) |
-| `Makefile` | Atalhos: `make up`, `down`, `logs`, `ps`, `reset`, `test` |
+| `Makefile` | Atalhos (Mac/Linux): `make up`, `down`, `logs`, `ps`, `reset`, `test` |
+| `iniciar.bat`, `parar.bat`, `logs.bat`, `resetar.bat`, `testar.bat` | Atalhos de clique duplo para o **Windows** (o mesmo que o `Makefile`). `iniciar.command` = clique duplo no Mac |
+| `.gitattributes` | Finais de linha (LF em tudo, CRLF só nos `.bat`) para funcionar no Windows |
 | `.env` / `.env.example` | Token da Twygo e senha do banco (o `.env` nunca vai para o Git) |
 | **Salão (tela)** | |
 | `frontend/src/config.js` | Nome do painel, setor e cor principal |
@@ -192,4 +219,4 @@ make reset   # APAGA o banco local e desliga (depois: make up)
 make test    # testes da cozinha (pytest) e da tela (vitest), dentro dos containers
 ```
 
-Sem `make` (Windows): `docker compose up -d --build -V` · `docker compose down` · `docker compose logs -f --tail=100` · `docker compose ps` · `docker compose down -v` · `docker compose exec -T backend pytest` e `docker compose exec -T frontend npm test`.
+No Windows: clique duplo em `iniciar.bat`, `parar.bat`, `logs.bat`, `resetar.bat`, `testar.bat` — ou, sem `make`: `docker compose up -d --build -V` · `docker compose down` · `docker compose logs -f --tail=100` · `docker compose ps` · `docker compose down -v` · `docker compose exec -T backend pytest` e `docker compose exec -T frontend npm test`.
