@@ -1,7 +1,7 @@
 # Cardápio de prompts
 
 Copie, cole no Claude Code e troque o que estiver entre `[colchetes]`.
-Todos usam a planilha do workshop, `public/exemplos/capacitacao_workshop.csv` (colunas: email, area, categoria, curso, horas_capacitacao, status_capacitacao, nota, concluido_em). **Ela tem e-mails reais de usuários da Twygo:** use só no workshop, não compartilhe o arquivo e não tire print de tabelas com e-mails. Quando a sua área precisar de outra planilha, peça ao Claude para criar uma de exemplo com dados inventados (e-mails `@exemplo.com`).
+Todos usam a planilha do workshop, `frontend/public/exemplos/capacitacao_workshop.csv` (colunas: email, area, categoria, curso, horas_capacitacao, status_capacitacao, nota, concluido_em). **Ela tem e-mails reais de usuários da Twygo:** use só no workshop, não compartilhe o arquivo e não tire print de tabelas com e-mails. Quando a sua área precisar de outra planilha, peça ao Claude para criar uma de exemplo com dados inventados (e-mails `@exemplo.com`).
 
 > Dica: um pedido por vez. Depois de cada um, abra o endereço que o Claude indicar e confira.
 
@@ -19,7 +19,21 @@ O Claude abre o arquivo `.env`. Cole o token logo depois de `TWYGO_API_TOKEN=`, 
 pronto
 ```
 
-O Claude reinicia o sistema e confere se o token funcionou. **Nunca cole o token no chat.**
+O Claude religa o sistema (`make up`) e confere se o token funcionou. **Nunca cole o token no chat.**
+
+---
+
+## 0.1 Ligar o sistema e guardar a planilha no banco
+
+```text
+Suba o sistema com Docker e me diga qual endereço abrir.
+```
+
+```text
+Na página Minha planilha, carreguei a planilha do workshop. Como faço para ela continuar lá
+amanhã, mesmo se eu desligar o computador?
+```
+(Resposta esperada: clique em **Salvar no banco**; ela aparece em **Planilhas salvas**.)
 
 ---
 
@@ -43,9 +57,14 @@ Depois faça.
 
 ### RH
 ```text
-Transforme a página Minha automação num painel de treinamentos usando public/exemplos/capacitacao_workshop.csv:
+Transforme a página Minha automação num painel de treinamentos usando frontend/public/exemplos/capacitacao_workshop.csv:
 cards com total de pessoas, horas totais e % concluído; gráfico de horas por área;
 tabela só com quem está "Em andamento", com botão de exportar.
+```
+```text
+Quero registrar o plano de treinamento de cada área (área, curso, meta de horas, prazo) e guardar no banco.
+Crie uma página "Plano de treinamentos" com um formulário para adicionar e apagar itens,
+um endpoint novo na cozinha e uma tabela no banco. Depois mostre meta × horas realizadas por área.
 ```
 ```text
 Crie uma página "Pendências de curso" que cruza a planilha carregada com os usuários da Twygo
@@ -54,7 +73,7 @@ e lista quem existe na Twygo mas ainda não concluiu o curso. Quero exportar ess
 
 ### Financeiro
 ```text
-Crie um exemplo public/exemplos/financeiro_despesas.csv (inventado: data, categoria, fornecedor, valor, centro_custo, status)
+Crie um exemplo frontend/public/exemplos/financeiro_despesas.csv (inventado: data, categoria, fornecedor, valor, centro_custo, status)
 e transforme a página Minha automação num painel de despesas:
 card de total gasto, total pendente e total atrasado; gráfico de valor por categoria;
 tabela filtrável por centro de custo.
@@ -63,10 +82,14 @@ tabela filtrável por centro de custo.
 Adicione um gráfico de despesas por mês (coluna data) e um alerta em vermelho listando as despesas "Atrasado"
 acima de R$ 1.000.
 ```
+```text
+Salve no banco a planilha de despesas de cada mês e crie uma página "Comparar meses" que deixa escolher
+duas planilhas salvas e mostra a diferença de valor por categoria.
+```
 
 ### Vendas
 ```text
-Crie um exemplo public/exemplos/vendas_leads.csv (inventado: data, empresa, contato_email @exemplo.com, origem, etapa, valor_estimado)
+Crie um exemplo frontend/public/exemplos/vendas_leads.csv (inventado: data, empresa, contato_email @exemplo.com, origem, etapa, valor_estimado)
 e monte um funil de vendas na página Minha automação:
 quantidade e valor estimado por etapa (Novo, Qualificado, Proposta, Negociação, Ganho, Perdido),
 taxa de conversão (Ganho ÷ total) e gráfico de leads por origem.
@@ -75,10 +98,14 @@ taxa de conversão (Ganho ÷ total) e gráfico de leads por origem.
 Crie uma página "Leads parados" que mostra leads em Proposta ou Negociação há mais de 30 dias
 (pela coluna data), ordenados pelo maior valor estimado, com exportar CSV.
 ```
+```text
+Quero guardar no banco uma "anotação" por lead (texto livre + data do próximo contato).
+Crie a tabela, o endpoint e, na página Leads parados, um campo para escrever e salvar a anotação.
+```
 
 ### Atendimento
 ```text
-Crie um arquivo de exemplo public/exemplos/atendimento_chamados.csv com 40 chamados inventados
+Crie um arquivo de exemplo frontend/public/exemplos/atendimento_chamados.csv com 40 chamados inventados
 (data, cliente_email @exemplo.com, assunto, canal, prioridade, status, tempo_resposta_horas)
 e adicione ele aos botões de exemplo. Depois monte na Minha automação: chamados por assunto,
 tempo médio de resposta e lista dos abertos de prioridade alta.
@@ -87,10 +114,14 @@ tempo médio de resposta e lista dos abertos de prioridade alta.
 Na Minha automação, agrupe os chamados pelos 5 assuntos mais frequentes e, para cada um,
 gere um rascunho de resposta padrão (texto fixo no código, sem usar IA externa) que eu possa copiar.
 ```
+```text
+Quero editar e guardar no banco as respostas padrão (assunto + texto), para não perder ao reiniciar.
+Crie a tabela, o endpoint e uma página "Respostas padrão" para adicionar, editar e apagar.
+```
 
 ### Marketing
 ```text
-Crie um exemplo public/exemplos/marketing_campanhas.csv (inventado: campanha, canal, data, investimento,
+Crie um exemplo frontend/public/exemplos/marketing_campanhas.csv (inventado: campanha, canal, data, investimento,
 cliques, leads) e um painel com custo por lead por canal, gráfico de leads por mês e ranking de campanhas.
 ```
 ```text
@@ -100,7 +131,7 @@ e mais leads Ganhos. Quero um gráfico de pizza e uma tabela.
 
 ### Produto
 ```text
-Crie um exemplo public/exemplos/produto_feedbacks.csv (inventado: data, cliente_email @exemplo.com,
+Crie um exemplo frontend/public/exemplos/produto_feedbacks.csv (inventado: data, cliente_email @exemplo.com,
 funcionalidade, nota_1_a_5, comentario) e um painel com nota média por funcionalidade,
 quantidade de feedbacks por mês e lista dos comentários com nota 1 ou 2.
 ```
@@ -111,7 +142,7 @@ quantas vezes cada palavra aparece (ignorando palavras comuns como "de", "a", "o
 
 ### Engenharia
 ```text
-Crie um exemplo public/exemplos/engenharia_tarefas.csv (inventado: id, titulo, responsavel_email @exemplo.com,
+Crie um exemplo frontend/public/exemplos/engenharia_tarefas.csv (inventado: id, titulo, responsavel_email @exemplo.com,
 status, pontos, data_abertura, data_fechamento) e mostre: tarefas por status, pontos entregues por pessoa
 e tempo médio de fechamento em dias.
 ```
@@ -126,8 +157,13 @@ Na página Minha planilha, adicione a opção de escolher um filtro (coluna + va
 e que o resumo, o gráfico e a exportação respeitem esse filtro.
 ```
 ```text
-Crie uma página "Comparar planilhas" onde eu carrego dois CSVs e vejo quais linhas estão em um e não no outro,
-comparando por uma coluna que eu escolho (ex.: email).
+Crie um endpoint na cozinha que recebe o id de uma planilha salva no banco e devolve a soma de uma coluna
+agrupada por outra (ex.: horas por área), e use ele numa página nova. Explique a diferença entre calcular
+na tela e calcular na cozinha.
+```
+```text
+Crie uma página "Comparar planilhas" onde eu escolho duas planilhas salvas no banco e vejo quais linhas
+estão em uma e não na outra, comparando por uma coluna que eu escolho (ex.: email).
 ```
 
 ---
@@ -144,5 +180,9 @@ comparando por uma coluna que eu escolho (ex.: email).
 | Página nova | `Crie uma página nova chamada "[nome]" no menu, baseada na Minha automação.` |
 | Entender o código | `Explique, sem termos técnicos, o que o arquivo [arquivo] faz.` |
 | Ver o que mudou | `Explique o que mudou desde o começo, em linguagem simples.` |
+| Guardar no banco | `Quero guardar [o quê] no banco. Crie a tabela, o endpoint e a página.` |
+| Ver o banco | `Quais planilhas estão salvas no banco? Me diga só nomes e quantidades de linhas.` |
+| Começar do zero | `Resete o banco (pode apagar as planilhas salvas).` |
+| Desligar | `Desligue o sistema.` |
 | Desfazer | `Desfaça a última mudança que você fez.` |
 | Erro | `deu erro: [cole a mensagem]` |

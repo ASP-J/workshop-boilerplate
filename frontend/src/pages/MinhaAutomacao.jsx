@@ -7,7 +7,7 @@
 // │ • "Na página Minha automação, use a planilha carregada em Minha          │
 // │    planilha e mostre o total de horas por área no gráfico."              │
 // │ • "Troque os dados de exemplo desta página pelo arquivo                  │
-// │    public/exemplos/capacitacao_workshop.csv e mostre horas por           │
+// │    frontend/public/exemplos/capacitacao_workshop.csv e mostre horas por  │
 // │    curso, com um card de % concluído."                                   │
 // │ • "Adicione um filtro por status (Concluído / Pendente) acima da tabela."│
 // │ • "Crie um card com quantos leads estão na etapa Proposta."              │
