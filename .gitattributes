@@ -1,0 +1,46 @@
+# Finais de linha: o repositório guarda tudo com LF (padrão Linux/Mac), e o Git
+# entrega cada arquivo do jeito certo em qualquer computador — inclusive no Windows
+# com core.autocrlf=true. Sem isto, scripts e configs podem chegar com CRLF e
+# quebrar dentro dos containers (que são Linux).
+* text=auto eol=lf
+
+# Tudo que roda ou é lido dentro do Docker: sempre LF.
+*.sh text eol=lf
+*.py text eol=lf
+Dockerfile* text eol=lf
+.dockerignore text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.env.example text eol=lf
+Makefile text eol=lf
+*.command text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.svg text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.ini text eol=lf
+
+# Scripts de clique duplo do Windows: sempre CRLF (o cmd.exe exige).
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Planilha do workshop: dados, guardados exatamente como vieram (sem conversão).
+*.csv -text
+
+# Binários: nunca converter.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.xlsx binary
+*.xls binary
+*.woff binary
+*.woff2 binary
