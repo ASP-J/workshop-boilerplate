@@ -15,6 +15,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.db import Base, SessionLocal, engine
 from app.erros import ErroAmigavel
@@ -49,6 +50,14 @@ async def erro_amigavel(_request: Request, erro: ErroAmigavel):
     return JSONResponse(status_code=erro.status, content={"message": erro.message, "code": erro.code})
 
 
+@app.exception_handler(StarletteHTTPException)
+async def erro_http(request: Request, erro: StarletteHTTPException):
+    # Endereço que não existe (404) responde em português; o resto segue o padrão.
+    if erro.status_code == 404 and request.url.path.startswith("/api"):
+        return JSONResponse(status_code=404, content={"message": "Esta rota não existe na cozinha (backend).", "code": "ROTA_INEXISTENTE"})
+    return JSONResponse(status_code=erro.status_code, content={"message": str(erro.detail), "detail": erro.detail}, headers=getattr(erro, "headers", None))
+
+
 @app.exception_handler(RequestValidationError)
 async def erro_de_validacao(_request: Request, erro: RequestValidationError):
     return JSONResponse(
@@ -66,8 +75,3 @@ app.include_router(health.router)
 app.include_router(twygo.router)
 app.include_router(planilhas.router)
 
-
-@app.api_route("/api/{caminho:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"], include_in_schema=False)
-def rota_inexistente(caminho: str):
-    """Qualquer /api/... que não existe responde em português."""
-    raise ErroAmigavel(404, "Esta rota não existe na cozinha (backend).", "ROTA_INEXISTENTE")
