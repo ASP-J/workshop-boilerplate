@@ -1,5 +1,5 @@
 // =============================================================================
-// PÁGINA INÍCIO — como usar, status do servidor e do token, atalhos e regras.
+// PÁGINA INÍCIO — como usar, status do servidor, do banco e do token, atalhos e regras.
 // =============================================================================
 import { Link } from "react-router-dom";
 import { config } from "../config.js";
@@ -38,6 +38,7 @@ export default function Inicio() {
 
       <div className="grade">
         <Status rotulo="Servidor local" carregando={saude.carregando} ok={saude.dados?.ok} textoOk="ligado" textoNao="desligado — peça: “rode o sistema”" />
+        <Status rotulo="Banco de dados" carregando={saude.carregando} ok={saude.dados?.db} textoOk="conectado" textoNao="sem conexão — peça: “rode o sistema”" />
         <Status rotulo="Token da Twygo" carregando={twygo.carregando} ok={tokenOk} textoOk="configurado" textoNao="não configurado" />
       </div>
 

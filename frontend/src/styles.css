@@ -53,6 +53,7 @@ button, .botao {
 button:hover, .botao:hover { filter: brightness(0.92); }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
 button.secundario, .botao.secundario { background: var(--lavanda); color: var(--roxo-escuro); }
+button.perigo { background: var(--vermelho); color: var(--branco); }
 button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid var(--amarelo); outline-offset: 2px; }
 
 input, select {

@@ -1,6 +1,6 @@
 // =============================================================================
 // PÁGINA USUÁRIOS TWYGO — lista todos os usuários via servidor local.
-// O token fica no servidor (.env); a tela só recebe os dados.
+// O token fica no servidor local (cozinha, lê do .env); a tela só recebe nome, e-mail e departamento.
 // =============================================================================
 import { useMemo } from "react";
 import { countBy, formatNumber } from "../lib/aggregate.js";

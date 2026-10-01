@@ -4,12 +4,13 @@
 //
 // Onde fica: SÓ no navegador, no "sessionStorage" desta aba. Assim ela continua
 // lá se você recarregar a página ou digitar o endereço de novo, mas SOME quando
-// a aba é fechada (ou ao clicar em "Limpar planilha"). Nada vai para servidor.
+// a aba é fechada (ou ao clicar em "Limpar planilha"). Para guardar de vez, o botão
+// "Salvar no banco" manda para o banco local (ver src/lib/planilhasSalvas.js).
 //
 // Se a planilha for grande demais para o navegador guardar, ela continua
 // funcionando na memória (até recarregar) e a tela mostra um aviso pequeno.
 //
-//   setSheet(sheet)  -> guarda (sheet = { fileName, columns, rows, numericColumns })
+//   setSheet(sheet)  -> guarda (sheet = { fileName, columns, rows, numericColumns, savedId? })
 //   clearSheet()     -> apaga da tela e do navegador
 //   useSheet()       -> hook React; devolve a planilha (com .persisted true/false) ou null
 // =============================================================================

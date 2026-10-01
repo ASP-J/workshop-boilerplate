@@ -1,6 +1,6 @@
 // =============================================================================
 // PÁGINA MINHA PLANILHA — carrega CSV/XLSX, mostra resumo, gráfico e tabela.
-// Tudo é processado no navegador: os dados nunca saem do computador.
+// A leitura é feita no navegador. "Salvar no banco" guarda no banco local (deste computador).
 // =============================================================================
 import { useEffect, useMemo, useState } from "react";
 import { average, formatNumber, groupBy, sum } from "../lib/aggregate.js";
@@ -9,6 +9,7 @@ import { useSheet } from "../lib/sheetStore.js";
 import ChartCard from "../components/ChartCard.jsx";
 import DataTable from "../components/DataTable.jsx";
 import KpiCard from "../components/KpiCard.jsx";
+import PlanilhasSalvas from "../components/PlanilhasSalvas.jsx";
 import SheetLoader, { SheetBar } from "../components/SheetLoader.jsx";
 
 export default function MinhaPlanilha() {
@@ -18,9 +19,10 @@ export default function MinhaPlanilha() {
     <>
       <div>
         <h1>📄 Minha planilha</h1>
-        <p className="subtitulo">Carregue um arquivo .csv ou .xlsx para ver resumo, gráfico e tabela. Nada sai do seu computador.</p>
+        <p className="subtitulo">Carregue um arquivo .csv ou .xlsx para ver resumo, gráfico e tabela. Salve no banco para não perder ao reiniciar. Nada sai do seu computador.</p>
       </div>
       {!sheet ? <SheetLoader /> : <Analise sheet={sheet} />}
+      <PlanilhasSalvas />
     </>
   );
 }

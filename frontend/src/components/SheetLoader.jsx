@@ -3,12 +3,13 @@
 // Ao carregar, guarda a planilha no sheetStore (compartilhada entre páginas e
 // guardada só nesta aba do navegador até fechar a aba ou clicar em "Limpar planilha").
 //
-// <SheetBar sheet={sheet} /> mostra o nome do arquivo + botão "Limpar planilha".
+// <SheetBar sheet={sheet} /> mostra o nome do arquivo + "Salvar no banco" + "Limpar planilha".
 // =============================================================================
 import { useState } from "react";
 import { parseCsvText, parseSheetFile } from "../lib/parseSheet.js";
 import { clearSheet, setSheet } from "../lib/sheetStore.js";
 import FileUpload from "./FileUpload.jsx";
+import { SalvarNoBanco } from "./PlanilhasSalvas.jsx";
 import LoadingState from "./LoadingState.jsx";
 
 // A planilha do workshop tem e-mails REAIS da Twygo: use só no workshop.
@@ -62,16 +63,19 @@ export default function SheetLoader() {
   );
 }
 
-/** Faixa com o nome do arquivo carregado e o botão "Limpar planilha". */
+/** Faixa com o nome do arquivo carregado, "Salvar no banco" e "Limpar planilha". */
 export function SheetBar({ sheet }) {
   return (
     <div className="linha-acoes">
       <span className="selo neutro">Planilha: {sheet.fileName}</span>
+      <SalvarNoBanco sheet={sheet} />
       <button className="secundario" onClick={clearSheet}>Limpar planilha</button>
       <span className="subtitulo" style={{ fontSize: "0.85rem" }}>
-        {sheet.persisted
-          ? "Fica guardada só nesta aba do navegador (some ao fechar a aba)."
-          : "Planilha grande demais para guardar no navegador: se recarregar a página, carregue de novo."}
+        {sheet.savedId
+          ? "Está salva no banco deste computador: continua lá depois de reiniciar o sistema."
+          : sheet.persisted
+            ? "Fica guardada só nesta aba do navegador (some ao fechar a aba). Para guardar de vez, clique em Salvar no banco."
+            : "Planilha grande demais para guardar no navegador: se recarregar a página, carregue de novo (ou salve no banco)."}
       </span>
     </div>
   );

@@ -1,6 +1,7 @@
 // =============================================================================
 // PÁGINA CRUZAR PLANILHA × TWYGO — junta a planilha carregada com os usuários
 // da Twygo pelo e-mail (sem diferenciar maiúsculas e ignorando espaços).
+// Dá para escolher a planilha carregada agora ou uma salva no banco.
 // =============================================================================
 import { useEffect, useMemo, useState } from "react";
 import { formatNumber } from "../lib/aggregate.js";
@@ -11,6 +12,7 @@ import { useApi } from "../lib/useApi.js";
 import DataTable from "../components/DataTable.jsx";
 import KpiCard from "../components/KpiCard.jsx";
 import LoadingState from "../components/LoadingState.jsx";
+import { EscolherPlanilhaSalva } from "../components/PlanilhasSalvas.jsx";
 import SheetLoader, { SheetBar } from "../components/SheetLoader.jsx";
 import { ErroTwygo } from "./UsuariosTwygo.jsx";
 
@@ -24,6 +26,7 @@ export default function CruzarPlanilhaTwygo() {
         <h1>🔗 Cruzar planilha × Twygo</h1>
         <p className="subtitulo">Descubra quais pessoas da sua planilha existem na Twygo (comparando o e-mail).</p>
       </div>
+      <EscolherPlanilhaSalva sheet={sheet} />
       {!sheet && <SheetLoader />}
       {twygo.carregando && <LoadingState texto="Buscando usuários na Twygo..." />}
       {twygo.erro && <ErroTwygo erro={twygo.erro} onTentarDeNovo={twygo.recarregar} />}
