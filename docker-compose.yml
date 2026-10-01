@@ -1,0 +1,65 @@
+# =============================================================================
+# O "restaurante" inteiro, ligado com um comando só (make up):
+#   postgres  = ESTOQUE  (banco de dados; guarda as planilhas salvas)
+#   backend   = COZINHA  (FastAPI; fala com o banco e com a Twygo, guarda o token)
+#   frontend  = SALÃO    (React; a tela que você abre no navegador)
+#
+# SEGURANÇA: as portas são publicadas SÓ em 127.0.0.1 (este computador).
+# Nunca tire o "127.0.0.1:" da frente das portas — isso exporia o sistema na rede.
+# =============================================================================
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-workshop}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-workshop}
+      POSTGRES_DB: ${POSTGRES_DB:-workshop}
+    # Sem porta publicada: só a cozinha (backend) fala com o banco, pela rede interna do Docker.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-workshop} -d ${POSTGRES_DB:-workshop}"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  backend:
+    build: ./backend
+    ports:
+      - "127.0.0.1:5194:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Montada a partir das variáveis POSTGRES_* do .env (a senha fica num lugar só).
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-workshop}:${POSTGRES_PASSWORD:-workshop}@postgres:5432/${POSTGRES_DB:-workshop}
+      # Token da Twygo: fica SÓ na cozinha, nunca vai para o navegador.
+      TWYGO_API_TOKEN: ${TWYGO_API_TOKEN:-}
+      TWYGO_API_BASE_URL: ${TWYGO_API_BASE_URL:-https://api.twygo.com}
+      # Faz o "salvou, reiniciou sozinho" funcionar também no Windows.
+      WATCHFILES_FORCE_POLLING: "true"
+    volumes:
+      - ./backend:/app
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+      start_interval: 2s
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:5193:5173"
+    depends_on:
+      - backend
+    environment:
+      VITE_API_TARGET: http://backend:8000
+    volumes:
+      - ./frontend:/app
+      # As peças (node_modules) ficam só dentro do container: o computador não precisa de Node.
+      - /app/node_modules
+
+volumes:
+  postgres_data:
