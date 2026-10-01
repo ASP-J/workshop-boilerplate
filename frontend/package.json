@@ -1,0 +1,26 @@
+{
+  "name": "twygo-boilerplate-workshop-tela",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Tela (frontend) do painel do Workshop de IA da Twygo. Roda dentro do Docker, só no seu computador.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest run",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "papaparse": "^5.7.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router-dom": "^7.18.4",
+    "read-excel-file": "^9.3.10",
+    "recharts": "^3.10.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.1",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  }
+}
